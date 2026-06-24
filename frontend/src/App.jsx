@@ -37,9 +37,34 @@ function App() {
 
       {result && (
         <div>
-          <h2>Result</h2>
-          <p>Company: {result.company}</p>
-          <p>Decision: {result.decision}</p>
+          <h2>{result.companyName}</h2>
+
+          <p>Symbol: {result.symbol}</p>
+
+          <p>
+            Current Price:
+            {result.currentPrice}
+          </p>
+
+          <p>
+            Market Cap:
+            {result.marketCap}
+          </p>
+
+          <p>
+            Sector:
+            {result.sector}
+          </p>
+
+          <p>
+            Industry:
+            {result.industry}
+          </p>
+
+          <p>
+            PE Ratio:
+            {result.peRatio}
+          </p>
         </div>
       )}
     </div>
