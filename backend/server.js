@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { GoogleGenerativeAI} = require("@google/generative-ai");
-const getCompanyData = require('./services/yahooFinanceService')
+const getCompanyData = require('./services/yahooFinanceService');
+const getCompanyNews = require('./services/newsService');
 
 const app = express();
 
@@ -18,9 +19,13 @@ app.post("/analyze", async (req, res) => {
   try {
     const { company } = req.body;
 
-    const data = await getCompanyData(company);
+    const companyData = await getCompanyData(company);
+    const newsData = await getCompanyNews(company);
 
-    res.json(data);
+    res.json({
+    companyData,
+    newsData
+    });
 
   } catch (error) {
     res.status(500).json({

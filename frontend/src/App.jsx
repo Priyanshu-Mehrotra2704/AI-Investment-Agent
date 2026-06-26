@@ -7,16 +7,13 @@ function App() {
 
   const analyzeCompany = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/analyze",
-        {
-          company,
-        }
-      );
+      const res = await axios.post("http://localhost:5000/analyze", {
+        company,
+      });
 
       setResult(res.data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -31,40 +28,80 @@ function App() {
         onChange={(e) => setCompany(e.target.value)}
       />
 
-      <button onClick={analyzeCompany}>
-        Analyze
-      </button>
+      <button onClick={analyzeCompany}>Analyze</button>
 
       {result && (
-        <div>
-          <h2>{result.companyName}</h2>
-
-          <p>Symbol: {result.symbol}</p>
+        <div style={{ marginTop: "30px" }}>
+          <h2>{result.companyData.companyName}</h2>
 
           <p>
-            Current Price:
-            {result.currentPrice}
+            <strong>Symbol:</strong> {result.companyData.symbol}
           </p>
 
           <p>
-            Market Cap:
-            {result.marketCap}
+            <strong>Current Price:</strong>{" "}
+            {result.companyData.currentPrice}
           </p>
 
           <p>
-            Sector:
-            {result.sector}
+            <strong>Market Cap:</strong>{" "}
+            {result.companyData.marketCap}
           </p>
 
           <p>
-            Industry:
-            {result.industry}
+            <strong>Sector:</strong>{" "}
+            {result.companyData.sector}
           </p>
 
           <p>
-            PE Ratio:
-            {result.peRatio}
+            <strong>Industry:</strong>{" "}
+            {result.companyData.industry}
           </p>
+
+          <p>
+            <strong>PE Ratio:</strong>{" "}
+            {result.companyData.peRatio}
+          </p>
+
+          <hr />
+
+          <h2>Latest News</h2>
+
+          {result.newsData.length === 0 ? (
+            <p>No news found.</p>
+          ) : (
+            result.newsData.map((article, index) => (
+              <div
+                key={index}
+                style={{
+                  marginBottom: "20px",
+                  border: "1px solid #ccc",
+                  padding: "10px",
+                }}
+              >
+                <h3>{article.title}</h3>
+
+                <p>{article.description}</p>
+
+                <p>
+                  <strong>Source:</strong> {article.source}
+                </p>
+
+                <p>
+                  <strong>Published:</strong>{" "}
+                  {new Date(article.publishedAt).toLocaleString()}
+                </p>
+
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read Full Article
+                </a>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
