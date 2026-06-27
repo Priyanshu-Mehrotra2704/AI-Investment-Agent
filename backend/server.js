@@ -4,6 +4,7 @@ require("dotenv").config();
 const { GoogleGenerativeAI} = require("@google/generative-ai");
 const getCompanyData = require('./services/yahooFinanceService');
 const getCompanyNews = require('./services/newsService');
+const analyzeInvestment = require('./agents/investmentAgent');
 
 const app = express();
 
@@ -21,10 +22,12 @@ app.post("/analyze", async (req, res) => {
 
     const companyData = await getCompanyData(company);
     const newsData = await getCompanyNews(company);
+    const analysis = await analyzeInvestment(companyData, newsData);
 
     res.json({
-    companyData,
-    newsData
+      companyData,
+      newsData,
+      analysis
     });
 
   } catch (error) {
