@@ -1,213 +1,159 @@
+import { motion } from "framer-motion";
+
+import SearchBar from "./components/SearchBar";
+import CompanyCard from "./components/CompanyCard";
+import NewsCard from "./components/NewsCard";
+import AnalysisCard from "./components/AnalysisCard";
+
+import { analyzeCompany } from "./services/api";
+
 import { useState } from "react";
-import axios from "axios";
 
 function App() {
-  const [company, setCompany] = useState("");
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  const analyzeCompany = async () => {
-    if (!company.trim()) return;
+  const [result,setResult]=useState(null);
+  const [loading,setLoading]=useState(false);
 
-    try {
+  async function handleAnalyze(company){
+
+    try{
+
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/analyze",
-        {
-          company,
-        }
-      );
+      const data=await analyzeCompany(company);
 
-      console.log(res.data);
+      setResult(data);
 
-      setResult(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong!");
-    } finally {
+    }catch(err){
+
+      console.log(err);
+
+    }finally{
+
       setLoading(false);
+
     }
-  };
+
+  }
 
   return (
-    <div style={{ padding: "40px", maxWidth: "1000px", margin: "auto" }}>
-      <h1>AI Investment Research Agent</h1>
 
-      <input
-        type="text"
-        placeholder="Enter company name"
-        value={company}
-        onChange={(e) => setCompany(e.target.value)}
-        style={{
-          padding: "10px",
-          width: "300px",
-          marginRight: "10px",
-        }}
-      />
+<div className="min-h-screen gradient">
 
-      <button
-        onClick={analyzeCompany}
-        style={{
-          padding: "10px 20px",
-          cursor: "pointer",
-        }}
-      >
-        Analyze
-      </button>
+<div className="max-w-7xl mx-auto px-6 py-10">
 
-      {loading && (
-        <h2 style={{ marginTop: "20px" }}>
-          Analyzing...
-        </h2>
-      )}
+<motion.div
 
-      {result && (
-        <>
-          <hr />
+initial={{opacity:0,y:-30}}
 
-          <h2>{result.companyData.companyName}</h2>
+animate={{opacity:1,y:0}}
 
-          <p>
-            <strong>Symbol:</strong>{" "}
-            {result.companyData.symbol}
-          </p>
+transition={{duration:.8}}
 
-          <p>
-            <strong>Current Price:</strong>{" "}
-            {result.companyData.currentPrice}
-          </p>
+className="text-center mb-10"
 
-          <p>
-            <strong>Market Cap:</strong>{" "}
-            {result.companyData.marketCap}
-          </p>
+>
 
-          <p>
-            <strong>Sector:</strong>{" "}
-            {result.companyData.sector}
-          </p>
+<h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
 
-          <p>
-            <strong>Industry:</strong>{" "}
-            {result.companyData.industry}
-          </p>
+AI Investment Research Agent
 
-          <p>
-            <strong>PE Ratio:</strong>{" "}
-            {result.companyData.peRatio}
-          </p>
+</h1>
 
-          <hr />
+<p className="text-slate-400 mt-4 text-lg">
 
-          <h2>Latest News</h2>
+Research • Analyze • Invest using AI
 
-          {result.newsData.length === 0 ? (
-            <p>No News Found.</p>
-          ) : (
-            result.newsData.map((article, index) => (
-              <div
-                key={index}
-                style={{
-                  border: "1px solid gray",
-                  padding: "15px",
-                  marginBottom: "20px",
-                  borderRadius: "10px",
-                }}
-              >
-                <h3>{article.title}</h3>
+</p>
 
-                <p>{article.description}</p>
+</motion.div>
 
-                <p>
-                  <strong>Source:</strong>{" "}
-                  {article.source}
-                </p>
+<SearchBar
 
-                <p>
-                  <strong>Published:</strong>{" "}
-                  {new Date(
-                    article.publishedAt
-                  ).toLocaleString()}
-                </p>
+loading={loading}
 
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Read Full Article
-                </a>
-              </div>
-            ))
-          )}
+onAnalyze={handleAnalyze}
 
-          <hr />
+/>
 
-          {result.analysis && (
-            <>
-              <h2>AI Investment Recommendation</h2>
+{loading && (
 
-              <div
-                style={{
-                  border: "2px solid green",
-                  padding: "20px",
-                  borderRadius: "10px",
-                }}
-              >
-                <h2>{result.analysis.decision}</h2>
+<div className="flex justify-center mt-20">
 
-                <p>
-                  <strong>Investment Score:</strong>{" "}
-                  {result.analysis.score}/100
-                </p>
+<div className="w-14 h-14 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"/>
 
-                <p>
-                  <strong>Confidence:</strong>{" "}
-                  {result.analysis.confidence}%
-                </p>
+</div>
 
-                <p>
-                  <strong>Summary:</strong>{" "}
-                  {result.analysis.summary}
-                </p>
+)}
 
-                <h3>Positives</h3>
+{result && (
 
-                <ul>
-                  {result.analysis.positives.map(
-                    (item, index) => (
-                      <li key={index}>{item}</li>
-                    )
-                  )}
-                </ul>
+<>
 
-                <h3>Risks</h3>
+<motion.div
 
-                <ul>
-                  {result.analysis.risks.map(
-                    (item, index) => (
-                      <li key={index}>{item}</li>
-                    )
-                  )}
-                </ul>
+initial={{opacity:0,y:40}}
 
-                <h3>Reasoning</h3>
+animate={{opacity:1,y:0}}
 
-                <ol>
-                  {result.analysis.reasoning.map(
-                    (step, index) => (
-                      <li key={index}>{step}</li>
-                    )
-                  )}
-                </ol>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
+transition={{delay:.2}}
+
+>
+
+<CompanyCard
+
+company={result.companyData}
+
+/>
+
+</motion.div>
+
+<motion.div
+
+initial={{opacity:0,y:40}}
+
+animate={{opacity:1,y:0}}
+
+transition={{delay:.35}}
+
+>
+
+<NewsCard
+
+news={result.newsData}
+
+/>
+
+</motion.div>
+
+<motion.div
+
+initial={{opacity:0,y:40}}
+
+animate={{opacity:1,y:0}}
+
+transition={{delay:.5}}
+
+>
+
+<AnalysisCard
+
+analysis={result.analysis}
+
+/>
+
+</motion.div>
+
+</>
+
+)}
+
+</div>
+
+</div>
+
   );
+
 }
 
 export default App;

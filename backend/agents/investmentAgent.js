@@ -22,10 +22,11 @@ Recent News:
 Return ONLY valid JSON in this format:
 
 {{
-  "decision": "INVEST or PASS",
-  "score": 0,
-  "confidence": 0,
-  "summary": "",
+  "decision": "INVEST",
+  "score": 88,
+  "confidence": 92,
+  "confidenceReason": "Multiple positive financial indicators and consistent positive news support a high-confidence recommendation.",
+  "summary": "...",
   "positives": [],
   "risks": [],
   "reasoning": []
