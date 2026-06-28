@@ -1,69 +1,22 @@
-import { motion } from "framer-motion";
+const accents = {
+  green:  { pill: "bg-emerald-500/8 border-emerald-500/15 text-emerald-400" },
+  blue:   { pill: "bg-blue-500/8 border-blue-500/15 text-blue-400" },
+  orange: { pill: "bg-amber-500/8 border-amber-500/15 text-amber-400" },
+  purple: { pill: "bg-violet-500/8 border-violet-500/15 text-violet-400" },
+};
 
-export default function MetricCard({
-  title,
-  value,
-  icon,
-  color = "from-blue-500 to-cyan-500",
-}) {
+export default function MetricCard({ title, value, icon, color = "blue" }) {
+  const { pill } = accents[color] ?? accents.blue;
+
   return (
-    <motion.div
-      whileHover={{
-        y: -8,
-        scale: 1.03,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 250,
-      }}
-      className="
-        relative
-        overflow-hidden
-        rounded-2xl
-        glass
-        p-6
-        card-hover
-      "
-    >
-      {/* Background Glow */}
-      <div
-        className={`
-        absolute
-        inset-0
-        opacity-10
-        bg-gradient-to-br
-        ${color}
-      `}
-      />
-
-      <div className="relative flex items-center justify-between">
-        <div>
-          <p className="text-slate-400 text-sm">
-            {title}
-          </p>
-
-          <h2 className="text-3xl font-bold mt-3 text-white break-words">
-            {value || "N/A"}
-          </h2>
-        </div>
-
-        <div
-          className={`
-          h-14
-          w-14
-          rounded-xl
-          bg-gradient-to-br
-          ${color}
-          flex
-          items-center
-          justify-center
-          text-2xl
-          shadow-lg
-        `}
-        >
-          {icon}
-        </div>
+    <div className="flex flex-col gap-3 p-5">
+      <div className={`self-start flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border ${pill}`}>
+        <span className="text-[13px] leading-none">{icon}</span>
+        <span>{title}</span>
       </div>
-    </motion.div>
+      <span className="text-xl font-semibold text-white leading-none">
+        {value}
+      </span>
+    </div>
   );
 }

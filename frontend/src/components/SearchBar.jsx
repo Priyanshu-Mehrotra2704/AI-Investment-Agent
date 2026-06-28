@@ -1,102 +1,99 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiSearch } from "react-icons/fi";
-import { HiSparkles } from "react-icons/hi2";
+import { FiSearch, FiArrowRight, FiLoader } from "react-icons/fi";
+
+const SUGGESTIONS = ["NVIDIA", "Apple", "Microsoft", "Tesla", "Amazon"];
 
 export default function SearchBar({ onAnalyze, loading }) {
   const [company, setCompany] = useState("");
 
-  const handleSubmit = () => {
-    if (!company.trim()) return;
+  function handleSubmit() {
+    if (!company.trim() || loading) return;
     onAnalyze(company);
-  };
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-      className="glass rounded-3xl p-8 mb-10"
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="rounded-2xl border border-white/8 bg-slate-900 overflow-hidden"
     >
-      <div className="text-center mb-8">
-        <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center">
-            <HiSparkles className="text-3xl text-cyan-400" />
-          </div>
-        </div>
-
-        <h2 className="text-3xl font-bold text-white">
-          AI Company Research
-        </h2>
-
-        <p className="text-slate-400 mt-2">
-          Enter any publicly listed company
+      {/* Header */}
+      <div className="px-6 pt-6 pb-5 border-b border-white/8">
+        <p className="text-xs font-medium uppercase tracking-widest text-slate-500 mb-1">
+          AI analyst
+        </p>
+        <h2 className="text-lg font-semibold text-white">Research a company</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Analyses financials, news, and investment potential.
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
+      {/* Search row */}
+      <div className="flex flex-col lg:flex-row gap-3 p-6 border-b border-white/8">
         <div className="relative flex-1">
           <FiSearch
-            className="absolute left-4 top-1/2
-                       -translate-y-1/2
-                       text-slate-400
-                       text-xl"
+            size={15}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
           />
-
           <input
-            type="text"
-            placeholder="Apple, NVIDIA, Tesla..."
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && handleSubmit()
-            }
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            placeholder="Ticker or company name — e.g. AAPL"
             className="
-            w-full
-            bg-slate-900/70
-            border
-            border-slate-700
-            rounded-xl
-            pl-12
-            pr-4
-            py-4
-            text-white
-            outline-none
-            transition
-            duration-300
-            focus:border-blue-500
-            focus:ring-4
-            focus:ring-blue-500/20
+              w-full rounded-xl bg-slate-800 border border-white/8
+              py-3 pl-10 pr-4 text-sm text-white placeholder:text-slate-600
+              outline-none transition-all
+              focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/15
             "
           />
         </div>
 
-        <motion.button
-          whileHover={{
-            scale: 1.05,
-          }}
-          whileTap={{
-            scale: 0.95,
-          }}
-          disabled={loading}
+        <button
           onClick={handleSubmit}
+          disabled={loading || !company.trim()}
           className="
-          px-8
-          rounded-xl
-          bg-gradient-to-r
-          from-blue-600
-          via-cyan-500
-          to-blue-600
-          font-semibold
-          text-white
-          shadow-lg
-          shadow-blue-500/30
-          transition-all
-          disabled:opacity-60
+            flex items-center justify-center gap-2
+            rounded-xl px-6 py-3
+            bg-blue-600 hover:bg-blue-500
+            disabled:opacity-40 disabled:cursor-not-allowed
+            text-sm font-medium text-white
+            transition-colors
           "
         >
-          {loading ? "Analyzing..." : "Analyze"}
-        </motion.button>
+          {loading ? (
+            <>
+              <FiLoader size={14} className="animate-spin" />
+              Analysing…
+            </>
+          ) : (
+            <>
+              Analyse
+              <FiArrowRight size={14} />
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Suggestions */}
+      <div className="px-6 py-4 flex flex-wrap items-center gap-2">
+        <span className="text-xs text-slate-600 mr-1">Try:</span>
+        {SUGGESTIONS.map((item) => (
+          <button
+            key={item}
+            onClick={() => setCompany(item)}
+            className="
+              text-xs px-3 py-1.5 rounded-full
+              border border-white/8 bg-slate-800
+              text-slate-400 hover:text-white hover:border-white/20
+              transition-colors
+            "
+          >
+            {item}
+          </button>
+        ))}
       </div>
     </motion.div>
   );

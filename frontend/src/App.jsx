@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import SearchBar from "./components/SearchBar";
 import CompanyCard from "./components/CompanyCard";
@@ -7,153 +8,108 @@ import AnalysisCard from "./components/AnalysisCard";
 
 import { analyzeCompany } from "./services/api";
 
-import { useState } from "react";
-
 function App() {
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [result,setResult]=useState(null);
-  const [loading,setLoading]=useState(false);
-
-  async function handleAnalyze(company){
-
-    try{
-
+  async function handleAnalyze(company) {
+    try {
       setLoading(true);
+      setError("");
+      setResult(null);
 
-      const data=await analyzeCompany(company);
+      const data = await analyzeCompany(company);
 
       setResult(data);
-
-    }catch(err){
-
-      console.log(err);
-
-    }finally{
-
+    } catch (err) {
+      setError("Unable to analyze company. Please try again.");
+    } finally {
       setLoading(false);
-
     }
-
   }
 
   return (
+    <div className="min-h-screen gradient">
+      <div className="max-w-7xl mx-auto px-6 py-10">
 
-<div className="min-h-screen gradient">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-14"
+        >
+          <h1 className="text-6xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-500 bg-clip-text text-transparent">
+            AI Investment Research Agent
+          </h1>
 
-<div className="max-w-7xl mx-auto px-6 py-10">
+          <p className="mt-5 text-slate-400 text-lg">
+            Get AI-powered investment insights in seconds.
+          </p>
+        </motion.div>
 
-<motion.div
+        {/* Search */}
+        <SearchBar
+          loading={loading}
+          onAnalyze={handleAnalyze}
+        />
 
-initial={{opacity:0,y:-30}}
+        {/* Error */}
+        {error && (
+          <div className="mt-8 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-red-300">
+            {error}
+          </div>
+        )}
 
-animate={{opacity:1,y:0}}
+        {/* Loading */}
+        {loading && (
+          <div className="mt-20 flex flex-col items-center">
 
-transition={{duration:.8}}
+            <div className="w-16 h-16 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin" />
 
-className="text-center mb-10"
+            <p className="mt-6 text-slate-400">
+              AI is researching the company...
+            </p>
 
->
+          </div>
+        )}
 
-<h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+        {/* Results */}
+        {result && (
+          <div className="space-y-10 mt-10">
 
-AI Investment Research Agent
+            {/* ⭐ AI Recommendation FIRST */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <AnalysisCard analysis={result.analysis} />
+            </motion.div>
 
-</h1>
+            {/* Company Snapshot */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <CompanyCard company={result.companyData} />
+            </motion.div>
 
-<p className="text-slate-400 mt-4 text-lg">
+            {/* Latest News */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <NewsCard news={result.newsData} />
+            </motion.div>
 
-Research • Analyze • Invest using AI
-
-</p>
-
-</motion.div>
-
-<SearchBar
-
-loading={loading}
-
-onAnalyze={handleAnalyze}
-
-/>
-
-{loading && (
-
-<div className="flex justify-center mt-20">
-
-<div className="w-14 h-14 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"/>
-
-</div>
-
-)}
-
-{result && (
-
-<>
-
-<motion.div
-
-initial={{opacity:0,y:40}}
-
-animate={{opacity:1,y:0}}
-
-transition={{delay:.2}}
-
->
-
-<CompanyCard
-
-company={result.companyData}
-
-/>
-
-</motion.div>
-
-<motion.div
-
-initial={{opacity:0,y:40}}
-
-animate={{opacity:1,y:0}}
-
-transition={{delay:.35}}
-
->
-
-<NewsCard
-
-news={result.newsData}
-
-/>
-
-</motion.div>
-
-<motion.div
-
-initial={{opacity:0,y:40}}
-
-animate={{opacity:1,y:0}}
-
-transition={{delay:.5}}
-
->
-
-<AnalysisCard
-
-analysis={result.analysis}
-
-/>
-
-</motion.div>
-
-</>
-
-)}
-
-</div>
-
-</div>
-
+          </div>
+        )}
+      </div>
+    </div>
   );
-
 }
 
 export default App;
