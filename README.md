@@ -236,7 +236,7 @@ Risks
 
 ---
 
-# 💡 Key Design Decisions
+# 💡 Design Decisions
 
 * Used LangChain.js to orchestrate the AI workflow.
 * Combined structured financial data with unstructured news for richer analysis.
